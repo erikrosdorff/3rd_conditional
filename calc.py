@@ -84,8 +84,10 @@ See price history
 # cg = CoinGeckoAPI()
 import json
 import requests
+import pyscript
 
 coin = input("Enter name of the coin: ")
+coin_label = Element("coin")
 symbol = input("Enter coin Symbol: ")
 currency = input('Enter Currency: ')
 url = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies={currency}'#input('Enter - ') #ask for url
@@ -178,7 +180,7 @@ num_of_compound = int(find_num_of_compound(num_times_interest_compounded_n))
 
 
 min_compound_interest = staking * ((1 + (min_reward/num_of_compound))**(num_of_compound*time_conversion))
-min_compound_interest = (min_reward + staking) * num_of_compound
+#min_compound_interest = (min_reward + staking) * num_of_compound
 try:
     max_compound_interest = staking * ((1 + (max_reward/num_of_compound))**(num_of_compound*time_conversion))
 except:

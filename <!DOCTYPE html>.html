@@ -2,6 +2,11 @@
 <html>
     <head>
         <title>"3rd Conditional Staking Calculator"</title>
+
+        <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+        <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+
     </head>
     <body>
 <h1>Staking Calculator</h1>
@@ -220,8 +225,16 @@
         <option value="D Daily">Daily<br></br>
         <option value="W Weekly">Weekly<br></br>
         <option value="M Monthly">Monthly<br></br>
+            <py-repl> </py-repl>
     </select>
 
 </form>
+
+<py-script src="./calc.py">
+
+    coin = input("Enter name of the coin: ")
+    coin_label = Element("coin")
+
+</py-script>
     </body>
 </html>
