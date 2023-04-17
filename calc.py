@@ -10,23 +10,19 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
 
             url_name_symbol = 'https://api.coingecko.com/api/v3/coins/list'
             response_name_symbol = requests.get(url_name_symbol)
-            data = json.loads(response_name_symbol.text)
-
-            desired_coin = coin
-            for c in data:
-                   if c['id'] == desired_coin:
-                         symbol = c['symbol']
-                         break
-                   else:
-                         print(f"Coin '{coin}' not found.")
-                         symbol = None
-                         
-            
+            data_currecny = json.loads(response_name_symbol.text)
+            for c in data_currecny:
+                  desired_coin = coin 
+                  if c['id'] == desired_coin:
+                        symbol = c['symbol']
+                        break
+            else:
+                  print(f"Coin '{coin}' not found.")
+           
             url_data = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies={currency}' 
             response = requests.get(url_data)
             data = json.loads(response.text)
-            price = data[coin][currency]
-            
+            price = data[coin][currency.lower()]
 
             min_compound_interest = staking * ((1 + (min_reward/compound))**(compound*time))
             max_compound_interest = staking * ((1 + (max_reward/compound))**(compound*time))
@@ -48,7 +44,7 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
                               currency_symbol = get_currency_symbol(currency, locale='en_US')
                               # Get the currency symbol associated with the currency code
                               formatted_var.append(format_currency(var, currency, locale='en_US', format=f'{currency_symbol} #,##0.00'))
-                  print(formatted_var)
+
             return {'coin': coin, 'symbol': symbol, 'price': formatted_var[0], 'currency': currency, 
                'staking': staking,
                'min_reward': min_reward, 'max_reward': max_reward, 'duration_select': duration_select, 
