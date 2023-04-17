@@ -3,10 +3,30 @@ import json
 import requests
 
 
-def stake_calc(coin, symbol, price, currency, staking, min_reward, max_reward, 
-               duration_select, num_duration, time, time_period_comp, compound, compound_repitition):
+def stake_calc(coin, currency, staking, min_reward, max_reward, 
+               duration_select, num_duration, time, 
+               time_period_comp, compound, compound_repitition):
+
+
+            url_name_symbol = 'https://api.coingecko.com/api/v3/coins/list'
+            response_name_symbol = requests.get(url_name_symbol)
+            data = json.loads(response_name_symbol.text)
+
+            desired_coin = coin
+            for c in data:
+                if c['id'] == desired_coin:
+                    symbol = c['symbol']
+                    break
+            else:
+                print(f"Coin '{coin}' not found.")
+            url_data = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies={currency}' 
+            response = requests.get(url_data)
+            data = json.loads(response.text)
+            price = data[coin][currency]
+            #return coin, symbol
+            print(f'Coin: {coin.capitalize()}\n Symbol : {symbol} with a price of {price} {currency.upper()}')
        
-       return {'coin': coin, 'symbol': symbol, 'price': price, 'currency': currency, 'staking': staking,
+            return {'coin': coin, 'symbol': symbol, 'price': price, 'currency': currency, 'staking': staking,
                'min_reward': min_reward, 'max_reward': max_reward, 'duration_select': duration_select, 
                'num_duration': num_duration, 'time':time, 'time_period_comp': time_period_comp, 
                'compound': compound, 'compound_repitition': compound_repitition}

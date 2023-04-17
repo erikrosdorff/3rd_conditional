@@ -1,6 +1,6 @@
 from flask import Flask, request
 from calc import stake_calc
-#from calc import  min_APY, max_APY, time, min_earnings, max_earnings
+
 
 app = Flask(__name__)
 
@@ -8,8 +8,8 @@ app = Flask(__name__)
 def index():
     # Retrieve form data
     coin = request.form.get('coin')
-    symbol = request.form.get('symbol')
-    price = float(request.form.get('price'))
+    #symbol = request.form.get('symbol')
+    #price = float(request.form.get('price'))
     currency = request.form.get('currency')
     staking = float(request.form.get('staking')) # p
     min_reward = float(request.form.get('min_reward')) / 100 # r_min
@@ -20,20 +20,12 @@ def index():
     time_period_comp = request.form.get('time_period_comp')
     compound = int(request.form.get('compound'))# n
     compound_repitition = request.form.get('compound_repitition')
-    # time_period = request.form.get('time_period')
-
-    # #commodity = request.form.get('commodity')
-    # time = request.form.get('time')
 
     
-    
-    stake = stake_calc(coin, symbol, price, currency, staking, min_reward, max_reward, 
+    #coin_data = coin_data(coin, currency)
+    stake = stake_calc(coin, currency, staking, min_reward, max_reward, 
                        duration_select, num_duration, time, time_period_comp, compound, 
-                       compound_repitition) #symbol, price, currency, staking, time, duration,
-    #            compounding, min_reward, max_reward, time_period) #get from return
-
-    stake['coin']
-    print('stake', stake)
+                       compound_repitition) 
 
     return str(stake)
 
