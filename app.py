@@ -16,7 +16,7 @@ def index():
     max_reward = float(request.form.get('max_reward')) / 100 # r_max
     duration_select = int(request.form.get('duration_select')) # t
     num_duration = request.form.get('num_duration')
-    time = request.form.get('time')
+    time = int(request.form.get('time'))
     time_period_comp = request.form.get('time_period_comp')
     compound = int(request.form.get('compound'))# n
     compound_repitition = request.form.get('compound_repitition')

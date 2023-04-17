@@ -19,17 +19,30 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
                     break
             else:
                 print(f"Coin '{coin}' not found.")
+            
             url_data = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies={currency}' 
             response = requests.get(url_data)
             data = json.loads(response.text)
             price = data[coin][currency]
-            #return coin, symbol
-            print(f'Coin: {coin.capitalize()}\n Symbol : {symbol} with a price of {price} {currency.upper()}')
-       
+            
+
+
+            min_compound_interest = staking * ((1 + (min_reward/compound))**(compound*time))
+            max_compound_interest = staking * ((1 + (max_reward/compound))**(compound*time))
+            min_compound_interest_currency = price * min_compound_interest
+            max_compound_interest_currency = price * max_compound_interest
+            min_earnings = min_compound_interest_currency + price
+            max_earnings = max_compound_interest_currency + price
+            
             return {'coin': coin, 'symbol': symbol, 'price': price, 'currency': currency, 'staking': staking,
                'min_reward': min_reward, 'max_reward': max_reward, 'duration_select': duration_select, 
                'num_duration': num_duration, 'time':time, 'time_period_comp': time_period_comp, 
-               'compound': compound, 'compound_repitition': compound_repitition}
+               'compound': compound, 'compound_repitition': compound_repitition, 
+               'min_compound_interest': min_compound_interest, 
+               'max_compound_interest': max_compound_interest,
+               'min_compound_interest_currency' : min_compound_interest_currency,
+               'max_compound_interest_currency' : max_compound_interest_currency,
+               'min_earnings' : min_earnings, 'max_earnings' : max_earnings}
 
 # def stake_calc(coin, symbol, price, currency, staking, time, duration,
 #                compounding, min_reward, max_reward, time_period):
