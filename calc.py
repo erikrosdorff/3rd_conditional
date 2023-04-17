@@ -1,4 +1,4 @@
-
+from babel.numbers import format_currency, get_currency_symbol
 import json
 import requests
 
@@ -14,18 +14,19 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
 
             desired_coin = coin
             for c in data:
-                if c['id'] == desired_coin:
-                    symbol = c['symbol']
-                    break
-            else:
-                print(f"Coin '{coin}' not found.")
+                   if c['id'] == desired_coin:
+                         symbol = c['symbol']
+                         break
+                   else:
+                         print(f"Coin '{coin}' not found.")
+                         symbol = None
+                         
             
             url_data = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies={currency}' 
             response = requests.get(url_data)
             data = json.loads(response.text)
             price = data[coin][currency]
             
-
 
             min_compound_interest = staking * ((1 + (min_reward/compound))**(compound*time))
             max_compound_interest = staking * ((1 + (max_reward/compound))**(compound*time))
@@ -34,15 +35,30 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
             min_earnings = min_compound_interest_currency + price
             max_earnings = max_compound_interest_currency + price
             
-            return {'coin': coin, 'symbol': symbol, 'price': price, 'currency': currency, 'staking': staking,
+            format_var = [price, min_compound_interest, max_compound_interest, 
+                          min_compound_interest_currency, max_compound_interest_currency, 
+                          min_earnings, max_earnings]
+            formatted_var = []
+            for var in format_var:
+                  if isinstance(var, str):
+                        var = var.upper()
+                  elif isinstance(var, (int, float)):
+                              currency = currency.upper()
+                              #currency_symbol = get_currency_symbol(currency_code, locale='en_US')
+                              currency_symbol = get_currency_symbol(currency, locale='en_US')
+                              # Get the currency symbol associated with the currency code
+                              formatted_var.append(format_currency(var, currency, locale='en_US', format=f'{currency_symbol} #,##0.00'))
+                  print(formatted_var)
+            return {'coin': coin, 'symbol': symbol, 'price': formatted_var[0], 'currency': currency, 
+               'staking': staking,
                'min_reward': min_reward, 'max_reward': max_reward, 'duration_select': duration_select, 
                'num_duration': num_duration, 'time':time, 'time_period_comp': time_period_comp, 
                'compound': compound, 'compound_repitition': compound_repitition, 
-               'min_compound_interest': min_compound_interest, 
-               'max_compound_interest': max_compound_interest,
-               'min_compound_interest_currency' : min_compound_interest_currency,
-               'max_compound_interest_currency' : max_compound_interest_currency,
-               'min_earnings' : min_earnings, 'max_earnings' : max_earnings}
+               'min_compound_interest': formatted_var[1], 
+               'max_compound_interest': formatted_var[2],
+               'min_compound_interest_currency' : formatted_var[3],
+               'max_compound_interest_currency' : formatted_var[4],
+               'min_earnings' : formatted_var[5], 'max_earnings' : formatted_var[6]}
 
 # def stake_calc(coin, symbol, price, currency, staking, time, duration,
 #                compounding, min_reward, max_reward, time_period):
