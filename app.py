@@ -14,8 +14,6 @@ def index():
     staking = float(request.form.get('staking')) # p
     min_reward = float(request.form.get('min_reward')) / 100 # r_min
     max_reward = float(request.form.get('max_reward')) / 100 # r_max
-    duration_select = int(request.form.get('duration_select')) # t
-    num_duration = request.form.get('num_duration')
     time = int(request.form.get('time'))
     time_period_comp = request.form.get('time_period_comp')
     compound = int(request.form.get('compound'))# n
@@ -23,9 +21,8 @@ def index():
 
     
     #coin_data = coin_data(coin, currency)
-    stake = stake_calc(coin, currency, staking, min_reward, max_reward, 
-                       duration_select, num_duration, time, time_period_comp, compound, 
-                       compound_repitition) 
+    stake = stake_calc(coin, currency, staking, min_reward, max_reward, time, 
+                       time_period_comp, compound, compound_repitition) 
 
     return str(stake)
 

@@ -25,7 +25,30 @@
             <option value="USD" id="commodity">USD - US Dollar - $</option>
             <option value="EUR" id="commodity">EUR - Euro - €</option>
             <option value="GBP" id="commodity">GBP - British Pound Sterling - £</option>
-            <option></option>
+            <option></option>        
+            <option value="AUD">AUD - Australian Dollar - en_AU</option>
+            <option value="CAD">CAD - Canadian Dollar - en_CA</option>
+            <option value="JPY">JPY - Japanese Yen - ja_JP</option>
+            <option value="CNY">CNY - Chinese Yuan - zh_CN</option>
+            <option value="KRW">KRW - South Korean Won - ko_KR</option>
+            <option value="INR">INR - Indian Rupee - hi_IN</option>
+            <option value="RUB">RUB - Russian Ruble - ru_RU</option>
+            <option value="CHF">CHF - Swiss Franc - de_CH</option>
+            <option value="SEK">SEK - Swedish Krona - sv_SE</option>
+            <option value="NOK">NOK - Norwegian Krone - nb_NO</option>
+            <option value="DKK">DKK - Danish Krone - da_DK</option>
+            <option value="BRL">BRL - Brazilian Real - pt_BR</option>
+            <option value="MXN">MXN - Mexican Peso - es_MX</option>
+            <option value="ARS">ARS - Argentine Peso - es_AR</option>
+            <option value="CLP">CLP - Chilean Peso - es_CL</option>
+            <option value="COP">COP - Colombian Peso - es_CO</option>
+            <option value="PEN">PEN - Peruvian Sol - es_PE</option>
+            <option value="UYU">UYU - Uruguayan Peso - es_UY</option>
+            <option value="ZAR">ZAR - South African Rand - en_ZA</option>
+            <option value="NGN">NGN - Nigerian Naira - en_NG</option>
+            <option value="EGP">EGP - Egyptian Pound - ar_EG</option>
+            <option value="AED">AED - UAE Dirham - ar_AE</option>
+            <option value="ILS">ILS - Israeli Shekel - he_IL</option>
         </select>
         <br></br>
         <label for="staking">Enter how many coins are being staked: </label> <!--p-->
@@ -40,18 +63,7 @@
 
         </select>
 
-        <label for="duration_select">Enter duration of staking:</label><!--t-->
-        <input type="number" id="duration_select" name="duration_select">
-        <select name="num_duration">
-
-            <option value="">Choose an option</option>
-            <option value="num_duration_w">Weeks</option>
-            <option value="num_duration_m">Months</option>
-            <option value="num_duration_y">Years</option>
-        </select>
-        <br></br>
-
-        <label for="time">Enter time period you would like to compound:</label>
+        <label for="time">Enter time period you would like to compound:</label><!--t-->
         <input type="number" id="time" name="time">
         <select name="time_period_comp">
 
@@ -62,13 +74,16 @@
         </select>
         <br></br>
 
-        <label for="compound">Enter amount of times you would like to compound:</label>
+        <label for="compound">Enter amount of times you would like to compound:</label><!--n-->
         <input type="number" id="compound" name="compound">
         <select name="compound_repitition">
             <option value="">Choose an option</option>
-            <option value="D_Daily">Daily<br></br>
-            <option value="W_Weekly">Weekly<br></br>
-            <option value="M_Monthly">Monthly<br></br>
+            <option value="D">Daily<br></br>
+            <option value="W">Weekly<br></br>
+            <option value="M">Monthly<br></br>
+            <option value="Y">Yearly<br></br>
+            <option value="Q">Quarterly<br></br>
+            <option value="B">Biannually<br></br>
                 <!-- <py-repl> </py-repl> -->
         </select>
                    <br>

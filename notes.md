@@ -1,3 +1,32 @@
+To do:
+#make time t and number of compound n adjustable
+#add currencies to index
+#see which currencies generate response
+#make locale adjustable , locale='en_US'
+add charts
+See if html can make interactive adjustable charts
+make website presentable
+Comment the code and explain it to the future
+min reward max reward %
+convert time periods to fit plural and singular forms
+write third conditional statement
+
+      currency_locale = {'USD': 'en_US', 'EUR': 'de_DE', 'GBP': 'en_GB', 'AFN': 'ps_AF',
+      'ALL': 'sq_AL', 'DZD': 'ar_DZ', 'AOA': 'pt_AO', 'ARS': 'es_AR', 'AMD': 'hy_AM',
+      'AWG': 'nl_AW', 'AUD': 'en_AU', 'AZN': 'az_Latn_AZ', 'BSD': 'en_BS',
+      'BHD': 'ar_BH', 'BDT': 'bn_BD', 'BBD': 'en_BB', 'BYR': 'be_BY',
+      'BEF': 'fr_BE', 'BZD': 'en_BZ', 'BMD': 'en_BM', 'BTN': 'dz_BT',
+      'BOB': 'es_BO', 'BAM': 'bs_Latn_BA', 'BWP': 'en_BW', 'BRL': 'pt_BR',
+      'BND': 'ms_BN', 'BGN': 'bg_BG', 'BIF': 'fr_BI', 'KHR': 'km_KH',
+      'CAD': 'en_CA', 'CVE': 'pt_CV', 'KYD': 'en_KY', 'XOF': 'fr_XOF',
+      'XAF': 'fr_XAF', 'XPF': 'fr_XPF', 'CLP': 'es_CL', 'CNY': 'zh_CN',
+      'COP': 'es_CO', 'KMF': 'fr_KM', 'CDF': 'fr_CD', 'CRC': 'es_CR',
+      'HRK': 'hr_HR', 'CUC': 'es_CU', 'CZK': 'cs_CZ', 'DKK': 'da_DK',
+      'DJF': 'fr_DJ', 'DOP': 'es_DO', 'XCD': 'en_XC', 'EGP': 'ar_EG',
+      'ERN': 'ti_ER', 'EEK': 'et_EE', 'ETB': 'am_ET', 'FKP': 'en_FK',
+      'FJD': 'en_FJ', 'GMD': 'en_GM', 'GEL': 'ka_GE', 'DEM': 'de_DE', 
+      'GHS': 'ak_GH', 'GIP': 'en_GI', 'GRD': 'el_GR'} 
+
 # lets make a calucator that shows our ROI in crypto staking
 '''
 V1
