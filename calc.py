@@ -1,6 +1,15 @@
 from babel.numbers import format_currency, get_currency_symbol
 import json
 import requests
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime
+import base64
+
+def read_html_file(result_page):
+      with open(result_page, 'r') as file:
+            html = file.read()
+      return html
 
 def stake_calc(coin, currency, staking, min_reward, max_reward, 
                time, time_period_comp, compound, compound_repitition):
@@ -14,7 +23,7 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
                   symbol = c['symbol']
                   break
       else:
-            print(f"Coin '{coin}' not found.")
+            print(f"coin '{coin}' not found.")
       
       url_data = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies={currency}' 
       response_data = requests.get(url_data)
@@ -23,28 +32,39 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
       
       url_chart = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart?vs_currency={currency}&days=12'  #add days
       response_chart = requests.get(url_chart)
-      data = json.loads(response_chart)
+      data_chart = json.loads(response_chart.content.decode())
+      prices = data_chart['prices']
+      timestamps = [datetime.utcfromtimestamp(t/1000).strftime('%Y-%m-%d %H:%M:%S') for t, p in prices]
 
-      # Convert the duration t
-      if time_period_comp == "W":
+      prices = [price[1] for price in data_chart['prices']]
+
+      fig, ax = plt.subplots()
+      ax.plot(timestamps, prices)
+
+      ax.set(xlabel='date', ylabel= f'Price {currency}', title= f'Price History {coin.capitalize()}')
+      ax.grid()
+
+      fig.savefig('price_history.png')
+      # convert the duration t
+      if time_period_comp == "w":
           time = time / 52
-      elif time_period_comp == "M":
+      elif time_period_comp == "m":
           time = time / 30
-      elif time_period_comp == "Y":
+      elif time_period_comp == "y":
           time = time * 1
       
       #find n
-      if compound_repitition == 'D':
+      if compound_repitition == 'd':
             compound = 365 * compound
-      elif compound_repitition == 'W':
+      elif compound_repitition == 'w':
             compound = 52 * compound
-      elif compound_repitition == 'M':
+      elif compound_repitition == 'm':
             compound = 12 * compound
-      elif compound_repitition == 'Y':
+      elif compound_repitition == 'y':
             compound = 1 * compound
-      elif compound_repitition == 'Q':
+      elif compound_repitition == 'q':
             compound = 0.25 * compound
-      elif compound_repitition == 'B':
+      elif compound_repitition == 'b':
             compound = 0.5 * compound
     
       min_compound_interest = staking * ((1 + (min_reward/compound))**(compound*time))
@@ -56,21 +76,21 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
       min_earnings_coin = min_compound_interest - staking
       max_earnings_coin = max_compound_interest - staking
 
-      currency_to_locale = {'USD': 'en_US', 'EUR': 'de_DE', 'GBP': 'en_GB', 'AFN': 'ps_AF',
-      'ALL': 'sq_AL', 'DZD': 'ar_DZ', 'AOA': 'pt_AO', 'ARS': 'es_AR', 'AMD': 'hy_AM',
-      'AWG': 'nl_AW', 'AUD': 'en_AU', 'AZN': 'az_Latn_AZ', 'BSD': 'en_BS',
-      'BHD': 'ar_BH', 'BDT': 'bn_BD', 'BBD': 'en_BB', 'BYR': 'be_BY',
-      'BEF': 'fr_BE', 'BZD': 'en_BZ', 'BMD': 'en_BM', 'BTN': 'dz_BT',
-      'BOB': 'es_BO', 'BAM': 'bs_Latn_BA', 'BWP': 'en_BW', 'BRL': 'pt_BR',
-      'BND': 'ms_BN', 'BGN': 'bg_BG', 'BIF': 'fr_BI', 'KHR': 'km_KH',
-      'CAD': 'en_CA', 'CVE': 'pt_CV', 'KYD': 'en_KY', 'XOF': 'fr_XOF',
-      'XAF': 'fr_XAF', 'XPF': 'fr_XPF', 'CLP': 'es_CL', 'CNY': 'zh_CN',
-      'COP': 'es_CO', 'KMF': 'fr_KM', 'CDF': 'fr_CD', 'CRC': 'es_CR',
-      'HRK': 'hr_HR', 'CUC': 'es_CU', 'CZK': 'cs_CZ', 'DKK': 'da_DK',
-      'DJF': 'fr_DJ', 'DOP': 'es_DO', 'XCD': 'en_XC', 'EGP': 'ar_EG',
-      'ERN': 'ti_ER', 'EEK': 'et_EE', 'ETB': 'am_ET', 'FKP': 'en_FK',
-      'FJD': 'en_FJ', 'GMD': 'en_GM', 'GEL': 'ka_GE', 'DEM': 'de_DE', 
-      'GHS': 'ak_GH', 'GIP': 'en_GI', 'GRD': 'el_GR'} 
+      currency_to_locale = {'USD': 'en_us', 'EUR': 'de_de', 'GBP': 'en_gb', 'AFN': 'ps_af',
+      'ALL': 'sq_al', 'DZD': 'ar_dz', 'AOA': 'pt_ao', 'ARS': 'es_ar', 'AMD': 'hy_am',
+      'AWG': 'nl_aw', 'AUD': 'en_au', 'AZN': 'az_latn_az', 'BSD': 'en_bs',
+      'BHD': 'ar_bh', 'BDT': 'bn_bd', 'BBD': 'en_bb', 'BYR': 'be_by',
+      'BEF': 'fr_be', 'BZD': 'en_bz', 'BMD': 'en_bm', 'BTN': 'dz_bt',
+      'BOB': 'es_bo', 'BAM': 'bs_latn_ba', 'BWP': 'en_bw', 'BRL': 'pt_br',
+      'BND': 'ms_bn', 'BGN': 'bg_bg', 'BIF': 'fr_bi', 'KHR': 'km_kh',
+      'CAD': 'en_ca', 'CVE': 'pt_cv', 'KYD': 'en_ky', 'XOF': 'fr_xof',
+      'XAF': 'fr_xaf', 'XPF': 'fr_xpf', 'CLP': 'es_cl', 'CNY': 'zh_cn',
+      'COP': 'es_co', 'KMF': 'fr_km', 'CDF': 'fr_cd', 'CRC': 'es_cr',
+      'HRK': 'hr_hr', 'CUC': 'es_cu', 'CZK': 'cs_cz', 'DKK': 'da_dk',
+      'DJF': 'fr_dj', 'DOP': 'es_do', 'XCD': 'en_xc', 'EGP': 'ar_eg',
+      'ERN': 'ti_er', 'EEK': 'et_ee', 'ETB': 'am_et', 'FKP': 'en_fk',
+      'FJD': 'en_fj', 'GMD': 'en_gm', 'GEL': 'ka_ge', 'DEM': 'de_de', 
+      'GHS': 'ak_gh', 'GIP': 'en_gi', 'GRD': 'el_gr'}
 
       format_var = [price, min_compound_interest_currency, max_compound_interest_currency, 
                     min_earnings_currency, max_earnings_currency]
@@ -82,36 +102,40 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
             elif isinstance(var, (int, float)):
                         currency = currency.upper()
                         formatted_var.append(format_currency(var, currency=currency, locale=currency_to_locale[currency]))
-      
+      with open('price_history.png', 'rb') as f:
+            img_data = base64.b64encode(f.read()).decode('utf-8')
       coin = coin.capitalize()
       symbol = symbol.upper()
-      return '<p><table>' \
-             '<tr><th>Coin</th><td>{}</td></tr>' \
-             '<tr><th>Symbol</th><td>{}</td></tr>' \
-             '<tr><th>Price</th><td>{}</td></tr>' \
-             '<tr><th>Currency</th><td>{}</td></tr>' \
-             '<tr><th>Staking</th><td>{} {}</td></tr>' \
-             '<tr><th>Min Reward</th><td>{} {}</td></tr>' \
-             '<tr><th>Max Reward</th><td>{} {}</td></tr>' \
-             '<tr><th>Time</th><td>{}</td></tr>' \
-             '<tr><th>Time Period Comp</th><td>{}</td></tr>' \
-             '<tr><th>Compound</th><td>{}</td></tr>' \
-             '<tr><th>Compound Repitition</th><td>{}</td></tr>' \
-             '<tr><th>Min Compound Interest</th><td>{} {}</td></tr>' \
-             '<tr><th>Max Compound Interest</th><td>{} {}</td></tr>' \
-             '<tr><th>Min Compound Interest Currency</th><td>{}</td></tr>' \
-             '<tr><th>Max Compound Interest Currency</th><td>{}</td></tr>' \
-             '<tr><th>Min Earnings Currency</th><td>{}</td></tr>' \
-             '<tr><th>Max Earnings Currency</th><td>{}</td></tr>' \
-             '<tr><th>Min Earnings Coin</th><td>{} {}</td></tr>' \
-             '<tr><th>Max Earnings Coin</th><td>{} {}</td></tr>' \
-             '</table></p>'.format(coin, symbol, formatted_var[0], currency, staking, symbol, 
-                               min_reward, symbol, max_reward, symbol, time, time_period_comp, 
-                               compound, compound_repitition, min_compound_interest, symbol, 
-                               max_compound_interest, symbol, formatted_var[1], formatted_var[2], 
-                               formatted_var[3], formatted_var[4], min_earnings_coin, symbol, 
-                               max_earnings_coin, symbol)
- 
+      html_template = '<p><table>' \
+             '<tr><th>coin</th><td>{}</td></tr>' \
+             '<tr><th>symbol</th><td>{}</td></tr>' \
+             '<tr><th>price</th><td>{}</td></tr>' \
+             '<tr><th>currency</th><td>{}</td></tr>' \
+             '<tr><th>staking</th><td>{} {}</td></tr>' \
+             '<tr><th>min reward</th><td>{} {}</td></tr>' \
+             '<tr><th>max reward</th><td>{} {}</td></tr>' \
+             '<tr><th>time</th><td>{}</td></tr>' \
+             '<tr><th>time period comp</th><td>{}</td></tr>' \
+             '<tr><th>compound</th><td>{}</td></tr>' \
+             '<tr><th>compound repitition</th><td>{}</td></tr>' \
+             '<tr><th>min compound interest</th><td>{} {}</td></tr>' \
+             '<tr><th>max compound interest</th><td>{} {}</td></tr>' \
+             '<tr><th>min compound interest currency</th><td>{}</td></tr>' \
+             '<tr><th>max compound interest currency</th><td>{}</td></tr>' \
+             '<tr><th>min earnings currency</th><td>{}</td></tr>' \
+             '<tr><th>max earnings currency</th><td>{}</td></tr>' \
+             '<tr><th>min earnings coin</th><td>{} {}</td></tr>' \
+             '<tr><th>max earnings coin</th><td>{} {}</td></tr>' \
+      '</table></p>' \
+      '<div><img src="data:image/png;base64,{}"</div>'
+      final_html = html_template.format(coin, symbol, formatted_var[0], currency, staking, symbol, 
+                  min_reward, symbol, max_reward, symbol, time, time_period_comp, 
+                  compound, compound_repitition, min_compound_interest, symbol, 
+                  max_compound_interest, symbol, formatted_var[1], formatted_var[2], 
+                  formatted_var[3], formatted_var[4], min_earnings_coin, symbol, 
+                  max_earnings_coin, symbol, img_data) 
+      return final_html
+
       # return {'coin': coin, 'symbol': symbol, 'price': formatted_var[0], 'currency': currency, 
       #    'staking': [staking, symbol],
       #    'min_reward': [min_reward, symbol], 'max_reward': [max_reward, symbol], 'time':time, 
