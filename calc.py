@@ -1,7 +1,6 @@
 from babel.numbers import format_currency, get_currency_symbol
 import json
 import requests
-import re
 
 def stake_calc(coin, currency, staking, min_reward, max_reward, 
                time, time_period_comp, compound, compound_repitition):
@@ -18,10 +17,14 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
             print(f"Coin '{coin}' not found.")
       
       url_data = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies={currency}' 
-      response = requests.get(url_data)
-      data = json.loads(response.text)
+      response_data = requests.get(url_data)
+      data = json.loads(response_data.text)
       price = data[coin][currency.lower()]
       
+      url_chart = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart?vs_currency={currency}&days=12'  #add days
+      response_chart = requests.get(url_chart)
+      data = json.loads(response_chart)
+
       # Convert the duration t
       if time_period_comp == "W":
           time = time / 52
@@ -43,8 +46,7 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
             compound = 0.25 * compound
       elif compound_repitition == 'B':
             compound = 0.5 * compound
-      
-      
+    
       min_compound_interest = staking * ((1 + (min_reward/compound))**(compound*time))
       max_compound_interest = staking * ((1 + (max_reward/compound))**(compound*time))
       min_compound_interest_currency = price * min_compound_interest
@@ -53,15 +55,6 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
       max_earnings_currency = max_compound_interest_currency + price
       min_earnings_coin = min_compound_interest - staking
       max_earnings_coin = max_compound_interest - staking
-      
-
-      def replace_currency_symbols_and_spaces(input_string):
-          # Define a regular expression to match currency symbols and the non-breaking space character
-          pattern = r'[\$\€\£\¥\₹\₽\s\u00A0]+'
-          # Replace the matched pattern with a space
-          output_string = re.sub(pattern, ' ', input_string)
-          return output_string
-
 
       currency_to_locale = {'USD': 'en_US', 'EUR': 'de_DE', 'GBP': 'en_GB', 'AFN': 'ps_AF',
       'ALL': 'sq_AL', 'DZD': 'ar_DZ', 'AOA': 'pt_AO', 'ARS': 'es_AR', 'AMD': 'hy_AM',
@@ -88,27 +81,48 @@ def stake_calc(coin, currency, staking, min_reward, max_reward,
                   var = var.upper()
             elif isinstance(var, (int, float)):
                         currency = currency.upper()
-                        #currency_symbol = get_currency_symbol(currency_code, locale='en_US')
-                        #currency_symbol = get_currency_symbol(currency, locale='en_US')
-                        # Get the currency symbol associated with the currency code
-                        #formatted_var.append(format_currency(var, currency, locale='en_US', format=f'{currency_symbol} #,##0.00'))
-                        print(currency_to_locale[currency])
-                        #print(locale_currency)
                         formatted_var.append(format_currency(var, currency=currency, locale=currency_to_locale[currency]))
       
       coin = coin.capitalize()
       symbol = symbol.upper()
-      return {'coin': coin, 'symbol': symbol, 'price': formatted_var[0], 'currency': currency, 
-         'staking': [staking, symbol],
-         'min_reward': [min_reward, symbol], 'max_reward': [max_reward, symbol], 'time':time, 
-         'time_period_comp': time_period_comp, 
-         'compound': compound, 'compound_repitition': compound_repitition, 
-         'min_compound_interest': [min_compound_interest, symbol],
-         'max_compound_interest': [max_compound_interest, symbol],
-         'min_compound_interest_currency' : formatted_var[1],
-         'max_compound_interest_currency' : formatted_var[2],
-         'min_earnings_currency' : formatted_var[3], 'max_earnings_currency' : formatted_var[4],
-         'min_earnings_coin':min_earnings_coin, 'max_earnings_coin': max_earnings_coin}
+      return '<p><table>' \
+             '<tr><th>Coin</th><td>{}</td></tr>' \
+             '<tr><th>Symbol</th><td>{}</td></tr>' \
+             '<tr><th>Price</th><td>{}</td></tr>' \
+             '<tr><th>Currency</th><td>{}</td></tr>' \
+             '<tr><th>Staking</th><td>{} {}</td></tr>' \
+             '<tr><th>Min Reward</th><td>{} {}</td></tr>' \
+             '<tr><th>Max Reward</th><td>{} {}</td></tr>' \
+             '<tr><th>Time</th><td>{}</td></tr>' \
+             '<tr><th>Time Period Comp</th><td>{}</td></tr>' \
+             '<tr><th>Compound</th><td>{}</td></tr>' \
+             '<tr><th>Compound Repitition</th><td>{}</td></tr>' \
+             '<tr><th>Min Compound Interest</th><td>{} {}</td></tr>' \
+             '<tr><th>Max Compound Interest</th><td>{} {}</td></tr>' \
+             '<tr><th>Min Compound Interest Currency</th><td>{}</td></tr>' \
+             '<tr><th>Max Compound Interest Currency</th><td>{}</td></tr>' \
+             '<tr><th>Min Earnings Currency</th><td>{}</td></tr>' \
+             '<tr><th>Max Earnings Currency</th><td>{}</td></tr>' \
+             '<tr><th>Min Earnings Coin</th><td>{} {}</td></tr>' \
+             '<tr><th>Max Earnings Coin</th><td>{} {}</td></tr>' \
+             '</table></p>'.format(coin, symbol, formatted_var[0], currency, staking, symbol, 
+                               min_reward, symbol, max_reward, symbol, time, time_period_comp, 
+                               compound, compound_repitition, min_compound_interest, symbol, 
+                               max_compound_interest, symbol, formatted_var[1], formatted_var[2], 
+                               formatted_var[3], formatted_var[4], min_earnings_coin, symbol, 
+                               max_earnings_coin, symbol)
+ 
+      # return {'coin': coin, 'symbol': symbol, 'price': formatted_var[0], 'currency': currency, 
+      #    'staking': [staking, symbol],
+      #    'min_reward': [min_reward, symbol], 'max_reward': [max_reward, symbol], 'time':time, 
+      #    'time_period_comp': time_period_comp, 
+      #    'compound': compound, 'compound_repitition': compound_repitition, 
+      #    'min_compound_interest': [min_compound_interest, symbol],
+      #    'max_compound_interest': [max_compound_interest, symbol],
+      #    'min_compound_interest_currency' : formatted_var[1],
+      #    'max_compound_interest_currency' : formatted_var[2],
+      #    'min_earnings_currency' : formatted_var[3], 'max_earnings_currency' : formatted_var[4],
+      #    'min_earnings_coin':min_earnings_coin, 'max_earnings_coin': max_earnings_coin}
 
 # def stake_calc(coin, symbol, price, currency, staking, time, duration,
 #                compounding, min_reward, max_reward, time_period):
